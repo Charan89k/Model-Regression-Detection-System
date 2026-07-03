@@ -1,8 +1,35 @@
+import os
+from enum import Enum
+from functools import lru_cache
+from typing import Literal
+
+from pydantic import Field, PostgresDsn, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseSettings):
-    """Application settings managed by Pydantic."""
+class Environment(str, Enum):
+    DEVELOPMENT = "development"
+    TESTING = "testing"
+    PRODUCTION = "production"
+
+
+class BaseAppConfig(BaseSettings):
+    """Base application configuration."""
+
+    ENVIRONMENT: Environment = Field(default=Environment.DEVELOPMENT)
+    LOG_LEVEL: str = Field(default="INFO")
+    LOG_FORMAT: Literal["text", "json"] = Field(default="text")
+
+    # LLM Providers (Secrets)
+    OPENAI_API_KEY: SecretStr | None = Field(default=None)
+    ANTHROPIC_API_KEY: SecretStr | None = Field(default=None)
+
+    # Database
+    DATABASE_URL: PostgresDsn
+
+    # API
+    API_HOST: str = Field(default="0.0.0.0")
+    API_PORT: int = Field(default=8000)
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -11,21 +38,46 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-    # Core
-    ENVIRONMENT: str = "development"
-    LOG_LEVEL: str = "INFO"
-    LOG_FORMAT: str = "text"
 
-    # LLM Providers
-    OPENAI_API_KEY: str = ""
-    ANTHROPIC_API_KEY: str = ""
-
-    # Database
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/mrds_db"
-
-    # API
-    API_HOST: str = "0.0.0.0"
-    API_PORT: int = 8000
+class DevelopmentConfig(BaseAppConfig):
+    """Configuration for development environment."""
+    ENVIRONMENT: Environment = Field(default=Environment.DEVELOPMENT)
+    LOG_LEVEL: str = Field(default="DEBUG")
+    LOG_FORMAT: Literal["text", "json"] = Field(default="text")
 
 
-settings = Settings()
+class TestingConfig(BaseAppConfig):
+    """Configuration for testing environment."""
+    ENVIRONMENT: Environment = Field(default=Environment.TESTING)
+    LOG_LEVEL: str = Field(default="DEBUG")
+    LOG_FORMAT: Literal["text", "json"] = Field(default="text")
+    
+    # In tests, we enforce these defaults if not overridden by env vars
+    DATABASE_URL: PostgresDsn = Field(
+        default=PostgresDsn("postgresql+asyncpg://postgres:postgres@localhost:5432/mrds_test")
+    )
+    OPENAI_API_KEY: SecretStr = Field(default=SecretStr("test_openai_key"))
+    ANTHROPIC_API_KEY: SecretStr = Field(default=SecretStr("test_anthropic_key"))
+
+
+class ProductionConfig(BaseAppConfig):
+    """Configuration for production environment."""
+    ENVIRONMENT: Environment = Field(default=Environment.PRODUCTION)
+    LOG_LEVEL: str = Field(default="INFO")
+    LOG_FORMAT: Literal["text", "json"] = Field(default="json")
+
+
+@lru_cache
+def get_settings() -> BaseAppConfig:
+    """
+    Configuration factory that returns the appropriate settings based on the environment.
+    Uses lru_cache to ensure settings are only parsed once.
+    """
+    env_state = os.getenv("ENVIRONMENT", "development").lower()
+    
+    if env_state == Environment.TESTING.value:
+        return TestingConfig()
+    elif env_state == Environment.PRODUCTION.value:
+        return ProductionConfig()
+    
+    return DevelopmentConfig()
