@@ -26,7 +26,7 @@ class BaseAppConfig(BaseSettings):
     GEMINI_API_KEY: SecretStr | None = Field(default=None)
 
     # Database
-    DATABASE_URL: PostgresDsn
+    DATABASE_URL: str = Field(default="sqlite+aiosqlite:///mrds.db")
 
     # API
     API_HOST: str = Field(default="0.0.0.0")
@@ -54,8 +54,8 @@ class TestingConfig(BaseAppConfig):
     LOG_FORMAT: Literal["text", "json"] = Field(default="text")
     
     # In tests, we enforce these defaults if not overridden by env vars
-    DATABASE_URL: PostgresDsn = Field(
-        default=PostgresDsn("postgresql+asyncpg://postgres:postgres@localhost:5432/mrds_test")
+    DATABASE_URL: str = Field(
+        default="sqlite+aiosqlite:///:memory:"
     )
     OPENAI_API_KEY: SecretStr = Field(default=SecretStr("test_openai_key"))
     ANTHROPIC_API_KEY: SecretStr = Field(default=SecretStr("test_anthropic_key"))
