@@ -28,6 +28,9 @@ class BaseAppConfig(BaseSettings):
     # Database
     DATABASE_URL: str = Field(default="sqlite+aiosqlite:///mrds.db")
 
+    # Notifications
+    SLACK_WEBHOOK_URL: SecretStr | None = Field(default=None)
+
     # API
     API_HOST: str = Field(default="0.0.0.0")
     API_PORT: int = Field(default=8000)
