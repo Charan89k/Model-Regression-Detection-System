@@ -1,0 +1,1049 @@
+{
+  "metadata": {
+    "name": "support_routing",
+    "version": "1.0",
+    "description": "Customer support emails for automated routing."
+  },
+  "cases": [
+    {
+      "id": "case-33980519",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "API returning 500 Internal Server Error",
+        "email_body": "We are seeing an anomaly loosely related to 'API returning 500 Internal Server Error'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "pro"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-ebdd4e5b",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "Hi,\n\nI am having an issue: Rate limit exceeded unexpectedly. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_1",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-f04f864c",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Please add dark mode",
+        "email_body": "URGENT: Regarding Please add dark mode.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "pro"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-0c8782f9",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "Hi,\n\nI am having an issue: Reset password link not working. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_3",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-835cd1ad",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "We are seeing an anomaly loosely related to 'Rate limit exceeded unexpectedly'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-d24f81f9",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Please add dark mode",
+        "email_body": "Hi,\n\nI am having an issue: Please add dark mode. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_5",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-48d99c5d",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Refund my pro subscription' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-8ffc7ec8",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Refund my pro subscription' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-1d92869b",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Please add dark mode",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Please add dark mode' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-f5113502",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "We need more CI/CD integrations",
+        "email_body": "URGENT: Regarding We need more CI/CD integrations.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "pro"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-39aa2f72",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "Can't login to my dashboard",
+        "email_body": "We are seeing an anomaly loosely related to 'Can't login to my dashboard'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "pro"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-1bffcc35",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "Support SAML SSO for enterprise",
+        "email_body": "We are seeing an anomaly loosely related to 'Support SAML SSO for enterprise'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "pro"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-2d763b16",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "Hi,\n\nI am having an issue: Reset password link not working. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_12",
+        "customer_tier": "pro"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-d0c58e74",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Double charged this month",
+        "email_body": "Hi,\n\nI am having an issue: Double charged this month. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_13",
+        "customer_tier": "pro"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-fea46da6",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Rate limit exceeded unexpectedly' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-524f7b01",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'I forgot my password' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-2663fcaa",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "API returning 500 Internal Server Error",
+        "email_body": "URGENT: Regarding API returning 500 Internal Server Error.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-f8bdcaa8",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Webhook failing constantly",
+        "email_body": "Hi,\n\nI am having an issue: Webhook failing constantly. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_17",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-2e292368",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "URGENT: Regarding Reset password link not working.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-b5b3da3f",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "Double charged this month",
+        "email_body": "We are seeing an anomaly loosely related to 'Double charged this month'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-0b3eb2e5",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "API returning 500 Internal Server Error",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'API returning 500 Internal Server Error' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-377d52f3",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "We are seeing an anomaly loosely related to 'Rate limit exceeded unexpectedly'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-c325b78b",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Invoice #6948 is incorrect",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Invoice #6948 is incorrect' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "pro"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-edf61a25",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "Hi,\n\nI am having an issue: I forgot my password. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_23",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-14dde939",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "URGENT: Regarding Refund my pro subscription.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-de826152",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "We need more CI/CD integrations",
+        "email_body": "URGENT: Regarding We need more CI/CD integrations.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-441b1cd0",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "Hi,\n\nI am having an issue: Refund my pro subscription. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_26",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-2162ceb1",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Double charged this month",
+        "email_body": "Hi,\n\nI am having an issue: Double charged this month. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_27",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-6b4614ca",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "Hi,\n\nI am having an issue: Rate limit exceeded unexpectedly. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_28",
+        "customer_tier": "pro"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-4159ceff",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Support SAML SSO for enterprise",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Support SAML SSO for enterprise' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-cdee1648",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Reset password link not working' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-efde2615",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "We need more CI/CD integrations",
+        "email_body": "Hi,\n\nI am having an issue: We need more CI/CD integrations. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_31",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-ba232521",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "We are seeing an anomaly loosely related to 'I forgot my password'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-6fa15b95",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "Hi,\n\nI am having an issue: Reset password link not working. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_33",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-b2624663",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Invoice #8594 is incorrect",
+        "email_body": "URGENT: Regarding Invoice #8594 is incorrect.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-fa7b91e5",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Please add dark mode",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Please add dark mode' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-76ada70b",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "URGENT: Regarding Rate limit exceeded unexpectedly.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-90b2804e",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Webhook failing constantly",
+        "email_body": "URGENT: Regarding Webhook failing constantly.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "pro"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-bc88c601",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'I forgot my password' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-8d63ee18",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Please add dark mode",
+        "email_body": "URGENT: Regarding Please add dark mode.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-c5817df0",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Can't login to my dashboard",
+        "email_body": "Hi,\n\nI am having an issue: Can't login to my dashboard. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_40",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-936c1d71",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "URGENT: Regarding Rate limit exceeded unexpectedly.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-48555b54",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Invoice #8322 is incorrect",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Invoice #8322 is incorrect' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-ad5d3ef0",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Webhook failing constantly",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Webhook failing constantly' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "pro"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-804c9aef",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "Hi,\n\nI am having an issue: Refund my pro subscription. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_44",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-e29118ba",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "We are seeing an anomaly loosely related to 'Refund my pro subscription'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "pro"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-64a6a9e0",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "URGENT: Regarding I forgot my password.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-7d6c5bec",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "Hi,\n\nI am having an issue: Reset password link not working. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_47",
+        "customer_tier": "pro"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-e9f8dba0",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Please add dark mode",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Please add dark mode' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-1707be98",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "API returning 500 Internal Server Error",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'API returning 500 Internal Server Error' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-a3e9bb4f",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "Hi,\n\nI am having an issue: I forgot my password. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_50",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-0003b628",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Reset password link not working' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-040a359a",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Invoice #7188 is incorrect",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Invoice #7188 is incorrect' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-29bbeb2f",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Refund my pro subscription' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "pro"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-858435f0",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Please add dark mode",
+        "email_body": "Hi,\n\nI am having an issue: Please add dark mode. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_54",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-cb731227",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Support SAML SSO for enterprise",
+        "email_body": "Hi,\n\nI am having an issue: Support SAML SSO for enterprise. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_55",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-b195327a",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "API returning 500 Internal Server Error",
+        "email_body": "Hi,\n\nI am having an issue: API returning 500 Internal Server Error. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_56",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-199484ff",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "URGENT: Regarding Refund my pro subscription.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-83393569",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "Hi,\n\nI am having an issue: Rate limit exceeded unexpectedly. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_58",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-c6e4eae1",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "Hi,\n\nI am having an issue: Rate limit exceeded unexpectedly. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_59",
+        "customer_tier": "free"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-5ff5dc29",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "Hi,\n\nI am having an issue: I forgot my password. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_60",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-2456c951",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'I forgot my password' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "pro"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-10cd8ccc",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "I forgot my password",
+        "email_body": "Hi,\n\nI am having an issue: I forgot my password. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_62",
+        "customer_tier": "pro"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-a0b53093",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Reset password link not working' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-5176fc11",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "Reset password link not working",
+        "email_body": "We are seeing an anomaly loosely related to 'Reset password link not working'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "password_reset",
+      "evaluation_criteria": [
+        "Must classify the intent as password_reset"
+      ]
+    },
+    {
+      "id": "case-55577b33",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Support SAML SSO for enterprise",
+        "email_body": "URGENT: Regarding Support SAML SSO for enterprise.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-1ed7eb7b",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "Hi,\n\nI am having an issue: Rate limit exceeded unexpectedly. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_66",
+        "customer_tier": "enterprise"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-6654d62e",
+      "difficulty": "expert",
+      "variables": {
+        "email_subject": "Please add dark mode",
+        "email_body": "We are seeing an anomaly loosely related to 'Please add dark mode'. However, upon inspecting our egress proxy logs, we noticed a 502 Bad Gateway originating from your edge nodes specifically when we send a payload exceeding 2MB over a kept-alive HTTP/2 connection. Is there a known MTU issue or WAF rule dropping this?\n\nBest,\nStaff Engineer",
+        "customer_tier": "pro"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-e627afc0",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Double charged this month",
+        "email_body": "Hi,\n\nI am having an issue: Double charged this month. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_68",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-3697a8ed",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Invoice #4630 is incorrect",
+        "email_body": "Hi,\n\nI am having an issue: Invoice #4630 is incorrect. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_69",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-444ed5f4",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "URGENT: Regarding Refund my pro subscription.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-42fc612f",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "Double charged this month",
+        "email_body": "Hi,\n\nI am having an issue: Double charged this month. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_71",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-41ccc9a9",
+      "difficulty": "easy",
+      "variables": {
+        "email_subject": "We need more CI/CD integrations",
+        "email_body": "Hi,\n\nI am having an issue: We need more CI/CD integrations. Can you please help me fix this as soon as possible?\n\nThanks,\nUser_72",
+        "customer_tier": "pro"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-55010f79",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Double charged this month",
+        "email_body": "URGENT: Regarding Double charged this month.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-39aed922",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Support SAML SSO for enterprise",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Support SAML SSO for enterprise' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-5ef481f9",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Refund my pro subscription",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Refund my pro subscription' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "pro"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-ce52b544",
+      "difficulty": "medium",
+      "variables": {
+        "email_subject": "Support SAML SSO for enterprise",
+        "email_body": "Hello support team,\n\nI've been trying to deal with 'Support SAML SSO for enterprise' but it's really confusing. I am on the Pro tier and this should be working. Can someone look into this and let me know the status?\n\nRegards,\nJohn Doe",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    },
+    {
+      "id": "case-4fbcf02e",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Double charged this month",
+        "email_body": "URGENT: Regarding Double charged this month.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "billing_refund",
+      "evaluation_criteria": [
+        "Must classify the intent as billing_refund"
+      ]
+    },
+    {
+      "id": "case-a5d49cc8",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "Rate limit exceeded unexpectedly",
+        "email_body": "URGENT: Regarding Rate limit exceeded unexpectedly.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "pro"
+      },
+      "expected_output": "api_outage",
+      "evaluation_criteria": [
+        "Must classify the intent as api_outage"
+      ]
+    },
+    {
+      "id": "case-6817a42f",
+      "difficulty": "hard",
+      "variables": {
+        "email_subject": "We need more CI/CD integrations",
+        "email_body": "URGENT: Regarding We need more CI/CD integrations.\n\nThis is blocking our production launch. I tried clearing my cache, reviewing the documentation, and even testing on a different network, but the problem persists. We need an engineer to review our account logs immediately.",
+        "customer_tier": "free"
+      },
+      "expected_output": "feature_request",
+      "evaluation_criteria": [
+        "Must classify the intent as feature_request"
+      ]
+    }
+  ]
+}
