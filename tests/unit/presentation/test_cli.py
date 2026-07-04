@@ -27,15 +27,15 @@ def test_list_datasets():
 def test_run_command_mocked(mock_session, mock_get_orchestrator):
     # Mock orchestrator behavior so it doesn't try to load files or hit APIs
     mock_orchestrator_instance = mock_get_orchestrator.return_value
-    
+
     # We use a trick for async mocks in synchronous CLI runners
     async def mock_run_eval(*args, **kwargs):
         return []
-    
+
     mock_orchestrator_instance.run_evaluation = mock_run_eval
 
     # Result will be empty, so it prints "No results generated" and exits with 1
     result = runner.invoke(app, ["run", "dummy", "1.0", "dummy_prompt", "1.0"])
-    
+
     assert result.exit_code == 1
     assert "No results generated" in result.stdout

@@ -20,14 +20,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Global Exception Handling
 @app.exception_handler(MRDSError)
-async def mrds_exception_handler(request: Request, exc: MRDSError):
+async def mrds_exception_handler(request: Request, exc: MRDSError) -> JSONResponse:
     """Translates internal domain errors to HTTP 400 Responses."""
     return JSONResponse(
         status_code=400,
         content={"error": exc.__class__.__name__, "message": str(exc)},
     )
+
 
 # Register Routers
 app.include_router(health.router)

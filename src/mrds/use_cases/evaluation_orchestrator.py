@@ -1,7 +1,8 @@
 import asyncio
-import aiofiles
 from pathlib import Path
 from typing import List
+
+import aiofiles
 
 from mrds.adapters.llm.factory import LLMFactory
 from mrds.core.logging.setup import get_logger
@@ -75,7 +76,7 @@ class EvaluationOrchestrator:
                         break
                     await f.write(item + "\n")
                     queue.task_done()
-        
+
         writer = asyncio.create_task(writer_task())
 
         # Map YAML PromptSchema to Domain PromptConfig
@@ -102,11 +103,15 @@ class EvaluationOrchestrator:
                     response = await runner.generate(domain_prompt_config, user_prompt)
                     success = True
                 except Exception as e:
-                    logger.exception("LLM generation failed for case", case_id=str(case.id), error=str(e))
+                    logger.exception(
+                        "LLM generation failed for case", case_id=str(case.id), error=str(e)
+                    )
                     # Provide a fallback response so the pipeline continues
                     response = ModelResponse(
                         raw_text=f"ERROR: {str(e)}",
-                        token_usage=TokenUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0),
+                        token_usage=TokenUsage(
+                            prompt_tokens=0, completion_tokens=0, total_tokens=0
+                        ),
                         latency=LatencyMetrics(total_latency_ms=0.0),
                     )
                     success = False
@@ -128,12 +133,12 @@ class EvaluationOrchestrator:
         tasks = [process_case(case) for case in dataset.cases]
         try:
             results = await asyncio.wait_for(asyncio.gather(*tasks), timeout=timeout_seconds)
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as e:
             logger.error("Evaluation timed out", timeout_seconds=timeout_seconds)
             # Signal writer to shutdown
             await queue.put(None)
             await writer
-            raise RuntimeError(f"Evaluation timed out after {timeout_seconds} seconds")
+            raise RuntimeError(f"Evaluation timed out after {timeout_seconds} seconds") from e
 
         # Signal writer to shutdown and wait for it
         await queue.put(None)

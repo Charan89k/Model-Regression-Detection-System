@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
 from uuid import UUID
 
 from mrds.domain.models import RunComparison

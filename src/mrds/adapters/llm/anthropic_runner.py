@@ -1,12 +1,11 @@
 import time
-from typing import AsyncGenerator
+from typing import Any, AsyncGenerator
 
 from anthropic import AsyncAnthropic
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from mrds.core.resilience import circuit_breaker
-
 from mrds.adapters.llm.base import BaseLLMRunner
+from mrds.core.resilience import circuit_breaker
 from mrds.domain.models import LatencyMetrics, ModelResponse, PromptConfig, TokenUsage
 
 
@@ -24,24 +23,24 @@ class AnthropicRunner(BaseLLMRunner):
     )
     async def generate(self, prompt_config: PromptConfig, user_prompt: str) -> ModelResponse:
         start_time = time.perf_counter()
-        
-        kwargs = {
+
+        kwargs: dict[str, Any] = {
             "model": prompt_config.model_name,
             "max_tokens": prompt_config.max_tokens or 4096,  # Anthropic requires max_tokens
             "temperature": prompt_config.temperature,
             "messages": [{"role": "user", "content": user_prompt}],
             "timeout": 30.0,
         }
-        
+
         if prompt_config.system_prompt:
             kwargs["system"] = prompt_config.system_prompt
-            
+
         response = await self.client.messages.create(**kwargs)
-        
+
         latency_ms = (time.perf_counter() - start_time) * 1000
-        
+
         # Extract text blocks
-        text_content = "".join([block.text for block in response.content if hasattr(block, 'text')])
+        text_content = "".join([block.text for block in response.content if hasattr(block, "text")])
 
         return ModelResponse(
             raw_text=text_content,
@@ -63,15 +62,17 @@ class AnthropicRunner(BaseLLMRunner):
         wait=wait_exponential(multiplier=1, min=2, max=10),
         reraise=True,
     )
-    async def stream(self, prompt_config: PromptConfig, user_prompt: str) -> AsyncGenerator[str, None]:
-        kwargs = {
+    async def stream(
+        self, prompt_config: PromptConfig, user_prompt: str
+    ) -> AsyncGenerator[str, None]:
+        kwargs: dict[str, Any] = {
             "model": prompt_config.model_name,
             "max_tokens": prompt_config.max_tokens or 4096,
             "temperature": prompt_config.temperature,
             "messages": [{"role": "user", "content": user_prompt}],
             "timeout": 30.0,
         }
-        
+
         if prompt_config.system_prompt:
             kwargs["system"] = prompt_config.system_prompt
 

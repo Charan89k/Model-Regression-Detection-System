@@ -54,7 +54,7 @@ select = [
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
 ]
-ignore = []
+ignore = ["B008"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -67,6 +67,13 @@ warn_unused_ignores = true
 warn_redundant_casts = true
 warn_unreachable = true
 disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+check_untyped_defs = false
+disallow_incomplete_defs = false
+warn_unreachable = false
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

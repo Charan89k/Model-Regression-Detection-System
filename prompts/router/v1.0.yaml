@@ -1,0 +1,17 @@
+name: router
+version: "1.0"
+author: Devops
+description: Router model prompt template for customer support emails.
+model_config:
+  provider: openai
+  model_name: gpt-4
+  temperature: 0.0
+system_prompt: |
+  You are an expert customer support router.
+  Analyze the email subject, body, and customer tier.
+  Determine the correct routing destination.
+user_template: |
+  Subject: {{ email_subject }}
+  Body: {{ email_body }}
+  Tier: {{ customer_tier }}
+few_shot_examples: []

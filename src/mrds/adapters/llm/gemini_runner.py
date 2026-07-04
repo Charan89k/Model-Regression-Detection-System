@@ -4,9 +4,8 @@ from typing import AsyncGenerator
 import google.generativeai as genai
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from mrds.core.resilience import circuit_breaker
-
 from mrds.adapters.llm.base import BaseLLMRunner
+from mrds.core.resilience import circuit_breaker
 from mrds.domain.models import LatencyMetrics, ModelResponse, PromptConfig, TokenUsage
 
 
@@ -14,9 +13,9 @@ class GeminiRunner(BaseLLMRunner):
     """Google Gemini API implementation using the google-generativeai SDK."""
 
     def __init__(self, api_key: str) -> None:
-        # The library uses global configuration, which isn't ideal for DI, 
+        # The library uses global configuration, which isn't ideal for DI,
         # but required by the current version of google-generativeai.
-        genai.configure(api_key=api_key)
+        genai.configure(api_key=api_key)  # type: ignore[attr-defined]
 
     @circuit_breaker(threshold=3, cooldown=60.0)
     @retry(
@@ -25,25 +24,23 @@ class GeminiRunner(BaseLLMRunner):
         reraise=True,
     )
     async def generate(self, prompt_config: PromptConfig, user_prompt: str) -> ModelResponse:
-        model = genai.GenerativeModel(
-            model_name=prompt_config.model_name,
-            system_instruction=prompt_config.system_prompt
+        model = genai.GenerativeModel(  # type: ignore[attr-defined]
+            model_name=prompt_config.model_name, system_instruction=prompt_config.system_prompt
         )
-        
+
         generation_config = genai.types.GenerationConfig(
             temperature=prompt_config.temperature,
             max_output_tokens=prompt_config.max_tokens,
         )
 
         start_time = time.perf_counter()
-        
+
         response = await model.generate_content_async(
-            contents=user_prompt,
-            generation_config=generation_config
+            contents=user_prompt, generation_config=generation_config
         )
-        
+
         latency_ms = (time.perf_counter() - start_time) * 1000
-        
+
         # Token usage extraction in Gemini requires accessing specific attributes
         prompt_tokens = 0
         completion_tokens = 0
@@ -75,21 +72,20 @@ class GeminiRunner(BaseLLMRunner):
         wait=wait_exponential(multiplier=1, min=2, max=10),
         reraise=True,
     )
-    async def stream(self, prompt_config: PromptConfig, user_prompt: str) -> AsyncGenerator[str, None]:
-        model = genai.GenerativeModel(
-            model_name=prompt_config.model_name,
-            system_instruction=prompt_config.system_prompt
+    async def stream(
+        self, prompt_config: PromptConfig, user_prompt: str
+    ) -> AsyncGenerator[str, None]:
+        model = genai.GenerativeModel(  # type: ignore[attr-defined]
+            model_name=prompt_config.model_name, system_instruction=prompt_config.system_prompt
         )
-        
+
         generation_config = genai.types.GenerationConfig(
             temperature=prompt_config.temperature,
             max_output_tokens=prompt_config.max_tokens,
         )
 
         response = await model.generate_content_async(
-            contents=user_prompt,
-            generation_config=generation_config,
-            stream=True
+            contents=user_prompt, generation_config=generation_config, stream=True
         )
 
         async for chunk in response:

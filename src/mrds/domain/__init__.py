@@ -1,7 +1,7 @@
 from mrds.domain.models import (
     EvalCase,
-    EvaluationResult,
     EvalSuite,
+    EvaluationResult,
     JudgeResult,
     LatencyMetrics,
     ModelResponse,

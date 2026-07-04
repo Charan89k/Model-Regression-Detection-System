@@ -1,3 +1,4 @@
+from typing import AsyncGenerator
 from uuid import uuid4
 
 import pytest
@@ -18,7 +19,7 @@ from mrds.infrastructure.db.repositories.run_repository import RunRepository
 
 
 @pytest_asyncio.fixture
-async def async_session() -> AsyncSession:
+async def async_session() -> AsyncGenerator[AsyncSession, None]:
     engine = create_async_engine(
         "sqlite+aiosqlite:///:memory:", echo=False, connect_args={"check_same_thread": False}
     )
@@ -46,7 +47,7 @@ async def test_save_and_get_run(async_session: AsyncSession):
         raw_text="mock response",
         token_usage=TokenUsage(prompt_tokens=10, completion_tokens=5, total_tokens=15),
         latency=LatencyMetrics(total_latency_ms=120.5),
-        finish_reason="stop"
+        finish_reason="stop",
     )
     score1 = Score(metric_name="exact_match", value=1.0)
     score2 = Score(metric_name="semantic_similarity", value=0.85)
@@ -74,17 +75,17 @@ async def test_save_and_get_run(async_session: AsyncSession):
     assert saved_res.id == result.id
     assert saved_res.case_id == result.case_id
     assert saved_res.success is True
-    
+
     # Verify nested JSON columns deserialized correctly
     assert saved_res.response.raw_text == "mock response"
     assert saved_res.response.token_usage.total_tokens == 15
     assert saved_res.response.latency.total_latency_ms == 120.5
     assert saved_res.response.finish_reason == "stop"
-    
+
     # Verify relationships
     assert len(saved_res.scores) == 2
     metric_names = [s.metric_name for s in saved_res.scores]
     assert "exact_match" in metric_names
     assert "semantic_similarity" in metric_names
-    
+
     assert saved_res.run_metadata.triggered_by == "pytest"

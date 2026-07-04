@@ -1,19 +1,18 @@
 import asyncio
-from typing import Optional
 from uuid import UUID
 
 import typer
 from rich.console import Console
 from rich.table import Table
 
+from mrds.adapters.llm.factory import LLMFactory
+from mrds.core.config import get_settings
 from mrds.domain.models import RegressionThresholds
 from mrds.infrastructure.db.repositories.run_repository import RunRepository
 from mrds.infrastructure.db.session import async_session_factory
 from mrds.use_cases.dataset_loader import DatasetLoader
 from mrds.use_cases.evaluation_orchestrator import EvaluationOrchestrator
 from mrds.use_cases.prompt_registry import PromptRegistry
-from mrds.adapters.llm.factory import LLMFactory
-from mrds.core.config import get_settings
 from mrds.use_cases.regression_detector import RegressionDetector
 
 app = typer.Typer(
@@ -47,13 +46,13 @@ def run_evaluation(
     prompt_name: str = typer.Argument(..., help="Name of the prompt"),
     prompt_version: str = typer.Argument(..., help="Version of the prompt"),
     concurrency: int = typer.Option(10, help="Max concurrent LLM requests"),
-):
+) -> None:
     """Trigger a new evaluation run."""
 
-    async def _run():
+    async def _run() -> None:
         orchestrator = _get_orchestrator()
-        
-        with console.status("[bold green]Evaluating test cases...") as status:
+
+        with console.status("[bold green]Evaluating test cases..."):
             results = await orchestrator.run_evaluation(
                 dataset_name=dataset_name,
                 dataset_version=dataset_version,
@@ -77,7 +76,7 @@ def run_evaluation(
         success = sum(1 for r in results if r.success)
         accuracy = (success / total) * 100 if total > 0 else 0.0
 
-        console.print(f"[bold green]Run completed successfully![/bold green]")
+        console.print("[bold green]Run completed successfully![/bold green]")
         console.print(f"Run ID: [bold]{results[0].run_metadata.run_id}[/bold]")
         console.print(f"Total Cases: {total}")
         console.print(f"Success Cases: {success} ({accuracy:.1f}%)")
@@ -89,10 +88,10 @@ def run_evaluation(
 def compare_runs(
     baseline_id: UUID = typer.Argument(..., help="Run ID for the baseline"),
     candidate_id: UUID = typer.Argument(..., help="Run ID for the candidate"),
-):
+) -> None:
     """Compare a candidate run against a baseline to detect regressions."""
 
-    async def _compare():
+    async def _compare() -> None:
         async with async_session_factory() as session:
             repo = RunRepository(session)
             baseline = await repo.get_run_results(baseline_id)
@@ -107,23 +106,25 @@ def compare_runs(
 
         detector = RegressionDetector()
         thresholds = RegressionThresholds()
-        
+
         comparison = detector.compare_runs(
             baseline_results=baseline,
             candidate_results=candidate,
             thresholds=thresholds,
         )
 
-        console.print(f"\n[bold]Regression Analysis[/bold]")
+        console.print("\n[bold]Regression Analysis[/bold]")
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("Metric")
         table.add_column("Value")
 
-        table.add_row("Baseline Accuracy", f"{comparison.baseline_accuracy*100:.1f}%")
-        table.add_row("Candidate Accuracy", f"{comparison.candidate_accuracy*100:.1f}%")
-        
+        table.add_row("Baseline Accuracy", f"{comparison.baseline_accuracy * 100:.1f}%")
+        table.add_row("Candidate Accuracy", f"{comparison.candidate_accuracy * 100:.1f}%")
+
         color = "red" if comparison.accuracy_delta < 0 else "green"
-        table.add_row("Accuracy Delta", f"[{color}]{comparison.accuracy_delta*100:+.1f}%[/{color}]")
+        table.add_row(
+            "Accuracy Delta", f"[{color}]{comparison.accuracy_delta * 100:+.1f}%[/{color}]"
+        )
         table.add_row("New Failures", str(len(comparison.new_failures)))
         table.add_row("Recovered", str(len(comparison.recovered_failures)))
 
@@ -140,10 +141,10 @@ def compare_runs(
 @app.command("report")
 def report_run(
     run_id: UUID = typer.Argument(..., help="Run ID to view"),
-):
+) -> None:
     """View details of a specific historical run."""
 
-    async def _report():
+    async def _report() -> None:
         async with async_session_factory() as session:
             repo = RunRepository(session)
             results = await repo.get_run_results(run_id)
@@ -165,17 +166,17 @@ def report_run(
 
 
 @app.command("datasets")
-def list_datasets():
+def list_datasets() -> None:
     """List all available datasets in the local registry."""
     loader = DatasetLoader(base_dir="datasets")
     try:
         dataset = loader.load_dataset("support_routing", "1.0")
-        
+
         table = Table(title="Available Datasets", show_header=True, header_style="bold cyan")
         table.add_column("Dataset Name")
         table.add_column("Version")
         table.add_column("Total Cases")
-        
+
         table.add_row(dataset.name, "1.0", str(len(dataset.cases)))
         console.print(table)
     except Exception as e:
@@ -183,13 +184,13 @@ def list_datasets():
 
 
 @app.command("prompts")
-def list_prompts():
+def list_prompts() -> None:
     """List all available prompts in the local registry."""
     # Since we didn't implement prompt iteration, we'll just mock a display for now
     table = Table(title="Available Prompts", show_header=True, header_style="bold green")
     table.add_column("Prompt Name")
     table.add_column("Version")
-    
+
     table.add_row("router", "1.0")
     console.print(table)
 

@@ -1,12 +1,11 @@
 import time
-from typing import AsyncGenerator
+from typing import Any, AsyncGenerator
 
 from openai import AsyncOpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from mrds.core.resilience import circuit_breaker
-
 from mrds.adapters.llm.base import BaseLLMRunner
+from mrds.core.resilience import circuit_breaker
 from mrds.domain.models import LatencyMetrics, ModelResponse, PromptConfig, TokenUsage
 
 
@@ -23,13 +22,13 @@ class OpenAIRunner(BaseLLMRunner):
         reraise=True,
     )
     async def generate(self, prompt_config: PromptConfig, user_prompt: str) -> ModelResponse:
-        messages = []
+        messages: list[Any] = []
         if prompt_config.system_prompt:
             messages.append({"role": "system", "content": prompt_config.system_prompt})
         messages.append({"role": "user", "content": user_prompt})
 
         start_time = time.perf_counter()
-        
+
         response = await self.client.chat.completions.create(
             model=prompt_config.model_name,
             messages=messages,
@@ -37,7 +36,7 @@ class OpenAIRunner(BaseLLMRunner):
             max_tokens=prompt_config.max_tokens,
             timeout=30.0,
         )
-        
+
         latency_ms = (time.perf_counter() - start_time) * 1000
         choice = response.choices[0]
         usage = response.usage
@@ -62,8 +61,10 @@ class OpenAIRunner(BaseLLMRunner):
         wait=wait_exponential(multiplier=1, min=2, max=10),
         reraise=True,
     )
-    async def stream(self, prompt_config: PromptConfig, user_prompt: str) -> AsyncGenerator[str, None]:
-        messages = []
+    async def stream(
+        self, prompt_config: PromptConfig, user_prompt: str
+    ) -> AsyncGenerator[str, None]:
+        messages: list[Any] = []
         if prompt_config.system_prompt:
             messages.append({"role": "system", "content": prompt_config.system_prompt})
         messages.append({"role": "user", "content": user_prompt})

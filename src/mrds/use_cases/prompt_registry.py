@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import Any, Dict
 
@@ -12,11 +11,13 @@ from mrds.domain.prompts import PromptTemplateSchema
 
 class PromptNotFoundError(MRDSError):
     """Raised when a prompt YAML file cannot be found."""
+
     pass
 
 
 class PromptRenderingError(MRDSError):
     """Raised when Jinja2 fails to render a template due to missing variables."""
+
     pass
 
 
@@ -38,7 +39,13 @@ class PromptRegistry:
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        file_path = self.base_dir / name / f"v{version}.yaml"
+        file_path = (self.base_dir / name / f"v{version}.yaml").resolve()
+        try:
+            if not file_path.is_relative_to(self.base_dir.resolve()):
+                raise PromptNotFoundError("Access denied: path traversal attempt detected.")
+        except ValueError as e:
+            raise PromptNotFoundError("Access denied: path traversal attempt detected.") from e
+
         if not file_path.exists():
             raise PromptNotFoundError(f"Prompt template not found at {file_path}")
 
@@ -46,11 +53,11 @@ class PromptRegistry:
             with open(file_path, "r", encoding="utf-8") as f:
                 raw_data = yaml.safe_load(f)
         except yaml.YAMLError as e:
-            raise MRDSError(f"Failed to parse YAML at {file_path}: {e}")
+            raise MRDSError(f"Failed to parse YAML at {file_path}: {e}") from e
 
         # Validate against the Pydantic schema
         schema = PromptTemplateSchema.model_validate(raw_data)
-        
+
         self._cache[cache_key] = schema
         return schema
 
@@ -63,4 +70,4 @@ class PromptRegistry:
             template = Template(template_str, undefined=StrictUndefined)
             return template.render(**variables)
         except UndefinedError as e:
-            raise PromptRenderingError(f"Failed to render template: {e}")
+            raise PromptRenderingError(f"Failed to render template: {e}") from e

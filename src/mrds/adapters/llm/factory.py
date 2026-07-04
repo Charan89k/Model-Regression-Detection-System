@@ -1,3 +1,5 @@
+from typing import Dict
+
 from mrds.adapters.llm.anthropic_runner import AnthropicRunner
 from mrds.adapters.llm.base import BaseLLMRunner
 from mrds.adapters.llm.gemini_runner import GeminiRunner
@@ -7,10 +9,9 @@ from mrds.core.exceptions.base import MRDSError
 
 class LLMProviderNotSupportedError(MRDSError):
     """Raised when an unknown LLM provider is requested."""
+
     pass
 
-
-from typing import Dict
 
 class LLMFactory:
     """Dependency injection factory for LLM runners, maintaining a cache of active runners."""
@@ -23,10 +24,11 @@ class LLMFactory:
 
     def get_runner(self, provider_name: str) -> BaseLLMRunner:
         provider_name = provider_name.lower().strip()
-        
+
         if provider_name in self._cache:
             return self._cache[provider_name]
-            
+
+        runner: BaseLLMRunner
         if provider_name == "openai":
             runner = OpenAIRunner(api_key=self.openai_key)
         elif provider_name == "anthropic":
@@ -35,6 +37,6 @@ class LLMFactory:
             runner = GeminiRunner(api_key=self.gemini_key)
         else:
             raise LLMProviderNotSupportedError(f"Unsupported LLM provider: {provider_name}")
-            
+
         self._cache[provider_name] = runner
         return runner

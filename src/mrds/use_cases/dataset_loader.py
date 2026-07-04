@@ -11,11 +11,13 @@ from mrds.domain.models import EvalCase, EvalSuite
 
 class DatasetNotFoundError(MRDSError):
     """Raised when a dataset JSON file cannot be found."""
+
     pass
 
 
 class DatasetValidationError(MRDSError):
     """Raised when a dataset JSON file fails schema validation."""
+
     pass
 
 
@@ -33,7 +35,7 @@ class DatasetLoader:
         Expected path format: {base_dir}/{name}/v{version}.json
         """
         schema = self._load_and_validate(name, version)
-        
+
         # Convert schema to domain model EvalSuite
         cases = []
         for case_schema in schema.cases:
@@ -58,29 +60,31 @@ class DatasetLoader:
         Calculates and returns statistics for a specific dataset version.
         """
         schema = self._load_and_validate(name, version)
-        
-        dist = {level: 0 for level in DifficultyLevel}
+
+        dist = dict.fromkeys(DifficultyLevel, 0)
         for case in schema.cases:
             dist[case.difficulty] += 1
-            
-        return DatasetStatistics(
-            total_cases=len(schema.cases),
-            difficulty_distribution=dist
-        )
+
+        return DatasetStatistics(total_cases=len(schema.cases), difficulty_distribution=dist)
 
     def _load_and_validate(self, name: str, version: str) -> DatasetSchema:
-        file_path = self.base_dir / name / f"v{version}.json"
-        
+        file_path = (self.base_dir / name / f"v{version}.json").resolve()
+        try:
+            if not file_path.is_relative_to(self.base_dir.resolve()):
+                raise DatasetNotFoundError("Access denied: path traversal attempt detected.")
+        except ValueError as e:
+            raise DatasetNotFoundError("Access denied: path traversal attempt detected.") from e
+
         if not file_path.exists():
             raise DatasetNotFoundError(f"Dataset not found at {file_path}")
-            
+
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 raw_data = json.load(f)
         except json.JSONDecodeError as e:
-            raise DatasetValidationError(f"Failed to parse JSON at {file_path}: {e}")
-            
+            raise DatasetValidationError(f"Failed to parse JSON at {file_path}: {e}") from e
+
         try:
             return DatasetSchema.model_validate(raw_data)
         except ValidationError as e:
-            raise DatasetValidationError(f"Dataset schema validation failed: {e}")
+            raise DatasetValidationError(f"Dataset schema validation failed: {e}") from e

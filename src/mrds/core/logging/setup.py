@@ -1,6 +1,6 @@
 import logging
 import sys
-from typing import Any
+from typing import cast
 
 import structlog
 
@@ -39,8 +39,7 @@ def setup_logging() -> None:
     else:
         processors.append(
             structlog.dev.ConsoleRenderer(
-                colors=True,
-                exception_formatter=structlog.dev.plain_traceback
+                colors=True, exception_formatter=structlog.dev.plain_traceback
             )
         )
 
@@ -57,4 +56,4 @@ def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
     Logger factory for the application.
     Returns a configured structlog bound logger.
     """
-    return structlog.get_logger(name)
+    return cast(structlog.stdlib.BoundLogger, structlog.get_logger(name))

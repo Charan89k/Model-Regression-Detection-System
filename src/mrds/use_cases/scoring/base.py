@@ -7,6 +7,7 @@ from mrds.domain.models import EvalCase, ModelResponse, Score
 
 class ScorerNotFoundError(MRDSError):
     """Raised when a requested scorer is not found in the registry."""
+
     pass
 
 
@@ -31,9 +32,11 @@ _SCORER_REGISTRY: Dict[str, Type[BaseScorer]] = {}
 
 def register_scorer(name: str) -> Callable[[Type[BaseScorer]], Type[BaseScorer]]:
     """Decorator to register a custom scorer."""
+
     def decorator(cls: Type[BaseScorer]) -> Type[BaseScorer]:
         _SCORER_REGISTRY[name] = cls
         return cls
+
     return decorator
 
 

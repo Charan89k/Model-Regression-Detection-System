@@ -13,12 +13,16 @@ class BaseLLMRunner(ABC):
         pass
 
     @abstractmethod
-    async def stream(self, prompt_config: PromptConfig, user_prompt: str) -> AsyncGenerator[str, None]:
+    async def stream(
+        self, prompt_config: PromptConfig, user_prompt: str
+    ) -> AsyncGenerator[str, None]:
         """Streams the response chunks back to the caller."""
         pass
 
 
-def calculate_cost(provider: str, model_name: str, prompt_tokens: int, completion_tokens: int) -> float:
+def calculate_cost(
+    provider: str, model_name: str, prompt_tokens: int, completion_tokens: int
+) -> float:
     """
     Calculates estimated cost based on token usage.
     Rates are per 1,000 tokens (mocked for simplicity, ideally loaded from config or DB).
@@ -34,13 +38,13 @@ def calculate_cost(provider: str, model_name: str, prompt_tokens: int, completio
         },
         "gemini": {
             "gemini-1.5-pro": {"input": 0.0035, "output": 0.0105},
-        }
+        },
     }
-    
+
     provider_rates = costs.get(provider.lower(), {})
     model_rates = provider_rates.get(model_name.lower(), {"input": 0.0, "output": 0.0})
-    
+
     input_cost = (prompt_tokens / 1000.0) * model_rates["input"]
     output_cost = (completion_tokens / 1000.0) * model_rates["output"]
-    
+
     return input_cost + output_cost

@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import Any
 from uuid import UUID
 
 import httpx
@@ -17,7 +17,7 @@ class SlackNotificationAdapter(BaseNotificationAdapter):
     Fails silently if SLACK_WEBHOOK_URL is not configured.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.settings = get_settings()
         self.webhook_url = (
             self.settings.SLACK_WEBHOOK_URL.get_secret_value()
@@ -25,7 +25,7 @@ class SlackNotificationAdapter(BaseNotificationAdapter):
             else None
         )
 
-    async def _post_payload(self, payload: dict) -> None:
+    async def _post_payload(self, payload: dict[str, Any]) -> None:
         """Internal helper to execute the HTTP POST to Slack."""
         if not self.webhook_url:
             logger.debug("SLACK_WEBHOOK_URL not configured. Skipping notification.")
@@ -56,19 +56,19 @@ class SlackNotificationAdapter(BaseNotificationAdapter):
                             "text": {
                                 "type": "plain_text",
                                 "text": "Evaluation Run Completed :test_tube:",
-                                "emoji": True
-                            }
+                                "emoji": True,
+                            },
                         },
                         {
                             "type": "section",
                             "fields": [
                                 {"type": "mrkdwn", "text": f"*Run ID:*\n`{str(run_id)}`"},
-                                {"type": "mrkdwn", "text": f"*Accuracy:*\n{accuracy*100:.1f}%"},
+                                {"type": "mrkdwn", "text": f"*Accuracy:*\n{accuracy * 100:.1f}%"},
                                 {"type": "mrkdwn", "text": f"*Total Cases:*\n{total_cases}"},
                                 {"type": "mrkdwn", "text": f"*Success:*\n{success_cases}"},
-                            ]
-                        }
-                    ]
+                            ],
+                        },
+                    ],
                 }
             ]
         }
@@ -78,43 +78,45 @@ class SlackNotificationAdapter(BaseNotificationAdapter):
         """Formats and sends regression/drift alerts."""
         has_critical = any(a.severity == "critical" for a in comparison.alerts)
         has_warning = any(a.severity == "warning" for a in comparison.alerts)
-        
+
         color = "#ff0000" if has_critical else ("#ffcc00" if has_warning else "#36a64f")
-        header_text = "🚨 Critical Regression Detected" if has_critical else ("⚠️ Regression Warning" if has_warning else "✅ No Regressions Detected")
+        header_text = (
+            "🚨 Critical Regression Detected"
+            if has_critical
+            else ("⚠️ Regression Warning" if has_warning else "✅ No Regressions Detected")
+        )
 
         blocks = [
-            {
-                "type": "header",
-                "text": {
-                    "type": "plain_text",
-                    "text": header_text,
-                    "emoji": True
-                }
-            },
+            {"type": "header", "text": {"type": "plain_text", "text": header_text, "emoji": True}},
             {
                 "type": "section",
                 "fields": [
-                    {"type": "mrkdwn", "text": f"*Baseline Accuracy:*\n{comparison.baseline_accuracy*100:.1f}%"},
-                    {"type": "mrkdwn", "text": f"*Candidate Accuracy:*\n{comparison.candidate_accuracy*100:.1f}%"},
-                    {"type": "mrkdwn", "text": f"*Accuracy Delta:*\n{comparison.accuracy_delta*100:+.1f}%"},
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Baseline Accuracy:*\n{comparison.baseline_accuracy * 100:.1f}%",
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": (
+                            f"*Candidate Accuracy:*\n{comparison.candidate_accuracy * 100:.1f}%"
+                        ),
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Accuracy Delta:*\n{comparison.accuracy_delta * 100:+.1f}%",
+                    },
                     {"type": "mrkdwn", "text": f"*New Failures:*\n{len(comparison.new_failures)}"},
-                ]
-            }
+                ],
+            },
         ]
 
         if comparison.alerts:
-            alert_text = "\n".join([f"• [{a.severity.upper()}] {a.message}" for a in comparison.alerts])
-            blocks.append({
-                "type": "section",
-                "text": {"type": "mrkdwn", "text": f"*Alerts:*\n{alert_text}"}
-            })
+            alert_text = "\n".join(
+                [f"• [{a.severity.upper()}] {a.message}" for a in comparison.alerts]
+            )
+            blocks.append(
+                {"type": "section", "text": {"type": "mrkdwn", "text": f"*Alerts:*\n{alert_text}"}}
+            )
 
-        payload = {
-            "attachments": [
-                {
-                    "color": color,
-                    "blocks": blocks
-                }
-            ]
-        }
+        payload = {"attachments": [{"color": color, "blocks": blocks}]}
         await self._post_payload(payload)

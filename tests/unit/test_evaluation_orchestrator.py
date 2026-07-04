@@ -1,15 +1,14 @@
 import json
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 
 import pytest
 
+from mrds.adapters.llm.factory import LLMFactory
 from mrds.domain.models import LatencyMetrics, ModelResponse, TokenUsage
 from mrds.use_cases.dataset_loader import DatasetLoader
 from mrds.use_cases.evaluation_orchestrator import EvaluationOrchestrator
 from mrds.use_cases.prompt_registry import PromptRegistry
-from mrds.adapters.llm.factory import LLMFactory
-from mrds.adapters.llm.factory import LLMFactory
 
 
 @pytest.fixture
@@ -58,12 +57,15 @@ async def test_run_evaluation(mock_dataset: Path, mock_prompt: Path, tmp_path: P
         token_usage=TokenUsage(prompt_tokens=1, completion_tokens=1, total_tokens=2),
         latency=LatencyMetrics(total_latency_ms=10.0),
     )
-    
+
     mock_factory = AsyncMock(spec=LLMFactory)
     mock_factory.get_runner.return_value = mock_runner
 
     orchestrator = EvaluationOrchestrator(
-        dataset_loader=loader, prompt_registry=registry, llm_factory=mock_factory, reports_dir=reports_dir
+        dataset_loader=loader,
+        prompt_registry=registry,
+        llm_factory=mock_factory,
+        reports_dir=reports_dir,
     )
 
     results = await orchestrator.run_evaluation(
@@ -94,10 +96,15 @@ async def test_run_evaluation(mock_dataset: Path, mock_prompt: Path, tmp_path: P
 
 
 @pytest.mark.asyncio
-async def test_run_evaluation_concurrent_writes(mock_dataset: Path, mock_prompt: Path, tmp_path: Path):
+async def test_run_evaluation_concurrent_writes(
+    mock_dataset: Path, mock_prompt: Path, tmp_path: Path
+):
     # Add a lot of cases to the dataset
     d_dir = mock_dataset / "test_data"
-    cases = [{"id": f"c{i}", "difficulty": "easy", "variables": {"text": f"hello {i}"}} for i in range(100)]
+    cases = [
+        {"id": f"c{i}", "difficulty": "easy", "variables": {"text": f"hello {i}"}}
+        for i in range(100)
+    ]
     with open(d_dir / "v1.0.json", "w") as f:
         json.dump(
             {
@@ -117,12 +124,15 @@ async def test_run_evaluation_concurrent_writes(mock_dataset: Path, mock_prompt:
         token_usage=TokenUsage(prompt_tokens=1, completion_tokens=1, total_tokens=2),
         latency=LatencyMetrics(total_latency_ms=10.0),
     )
-    
+
     mock_factory = AsyncMock(spec=LLMFactory)
     mock_factory.get_runner.return_value = mock_runner
 
     orchestrator = EvaluationOrchestrator(
-        dataset_loader=loader, prompt_registry=registry, llm_factory=mock_factory, reports_dir=reports_dir
+        dataset_loader=loader,
+        prompt_registry=registry,
+        llm_factory=mock_factory,
+        reports_dir=reports_dir,
     )
 
     results = await orchestrator.run_evaluation(
@@ -137,7 +147,7 @@ async def test_run_evaluation_concurrent_writes(mock_dataset: Path, mock_prompt:
     assert len(results) == 100
     report_files = list(reports_dir.glob("*.jsonl"))
     assert len(report_files) == 1
-    
+
     with open(report_files[0], "r") as f:
         lines = f.readlines()
         assert len(lines) == 100
