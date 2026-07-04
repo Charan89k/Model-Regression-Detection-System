@@ -9,6 +9,8 @@ from mrds.use_cases.dataset_loader import DatasetLoader
 from mrds.use_cases.evaluation_orchestrator import EvaluationOrchestrator
 from mrds.use_cases.prompt_registry import PromptRegistry
 from mrds.use_cases.regression_detector import RegressionDetector
+from mrds.adapters.llm.factory import LLMFactory
+from mrds.core.config import get_settings
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
@@ -32,13 +34,24 @@ def get_prompt_registry() -> PromptRegistry:
     return PromptRegistry(base_dir="prompts")
 
 
+def get_llm_factory() -> LLMFactory:
+    """Dependency to provide the LLMFactory."""
+    settings = get_settings()
+    return LLMFactory(
+        openai_key=settings.OPENAI_KEY.get_secret_value() if settings.OPENAI_KEY else "",
+        anthropic_key=settings.ANTHROPIC_KEY.get_secret_value() if settings.ANTHROPIC_KEY else "",
+        gemini_key=settings.GEMINI_KEY.get_secret_value() if settings.GEMINI_KEY else "",
+    )
+
+
 def get_evaluation_orchestrator(
     loader: DatasetLoader = Depends(get_dataset_loader),
     registry: PromptRegistry = Depends(get_prompt_registry),
+    llm_factory: LLMFactory = Depends(get_llm_factory),
 ) -> EvaluationOrchestrator:
     """Dependency to provide the EvaluationOrchestrator."""
     return EvaluationOrchestrator(
-        dataset_loader=loader, prompt_registry=registry, reports_dir="reports"
+        dataset_loader=loader, prompt_registry=registry, llm_factory=llm_factory, reports_dir="reports"
     )
 
 

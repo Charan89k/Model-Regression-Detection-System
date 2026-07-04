@@ -27,10 +27,15 @@ class EvaluationOrchestrator:
     """
 
     def __init__(
-        self, dataset_loader: DatasetLoader, prompt_registry: PromptRegistry, reports_dir: str | Path
-    ):
+        self,
+        dataset_loader: DatasetLoader,
+        prompt_registry: PromptRegistry,
+        llm_factory: LLMFactory,
+        reports_dir: str | Path,
+    ) -> None:
         self.dataset_loader = dataset_loader
         self.prompt_registry = prompt_registry
+        self.llm_factory = llm_factory
         self.reports_dir = Path(reports_dir)
         self.reports_dir.mkdir(parents=True, exist_ok=True)
 
@@ -42,6 +47,7 @@ class EvaluationOrchestrator:
         prompt_version: str,
         triggered_by: str,
         concurrency_limit: int = 10,
+        timeout_seconds: float = 3600.0,
     ) -> List[EvaluationResult]:
         logger.info(
             "Starting evaluation",
@@ -74,12 +80,12 @@ class EvaluationOrchestrator:
 
         # Map YAML PromptSchema to Domain PromptConfig
         domain_prompt_config = PromptConfig(
-            provider=prompt_schema.model_config.provider,
-            model_name=prompt_schema.model_config.model_name,
+            provider=prompt_schema.llm_config.provider,
+            model_name=prompt_schema.llm_config.model_name,
             system_prompt=prompt_schema.system_prompt,
             user_template=prompt_schema.user_template,
-            temperature=prompt_schema.model_config.temperature,
-            max_tokens=prompt_schema.model_config.max_tokens,
+            temperature=prompt_schema.llm_config.temperature,
+            max_tokens=prompt_schema.llm_config.max_tokens,
         )
 
         async def process_case(case: EvalCase) -> EvaluationResult:
@@ -89,8 +95,8 @@ class EvaluationOrchestrator:
                     prompt_schema.user_template, case.variables
                 )
 
-                # Get runner via Dependency Injection
-                runner = LLMFactory.get_runner(prompt_schema.model_config.provider)
+                # Get runner via Dependency Injection from the instance factory
+                runner = self.llm_factory.get_runner(prompt_schema.llm_config.provider)
 
                 try:
                     response = await runner.generate(domain_prompt_config, user_prompt)
@@ -118,9 +124,16 @@ class EvaluationOrchestrator:
 
                 return result
 
-        # Fan out tasks concurrently
+        # Fan out tasks concurrently with a global timeout
         tasks = [process_case(case) for case in dataset.cases]
-        results = await asyncio.gather(*tasks)
+        try:
+            results = await asyncio.wait_for(asyncio.gather(*tasks), timeout=timeout_seconds)
+        except asyncio.TimeoutError:
+            logger.error("Evaluation timed out", timeout_seconds=timeout_seconds)
+            # Signal writer to shutdown
+            await queue.put(None)
+            await writer
+            raise RuntimeError(f"Evaluation timed out after {timeout_seconds} seconds")
 
         # Signal writer to shutdown and wait for it
         await queue.put(None)

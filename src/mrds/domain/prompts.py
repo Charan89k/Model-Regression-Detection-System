@@ -25,7 +25,7 @@ class PromptTemplateSchema(MRDSDomainModel):
     version: str = Field(..., description="Version of the prompt (e.g., '1.0.0').")
     author: Optional[str] = Field(default=None, description="Author or team who created the prompt.")
     description: Optional[str] = Field(default=None, description="Description of the prompt's purpose.")
-    model_config: ModelConfigSchema = Field(..., description="Default model configuration.")
+    llm_config: ModelConfigSchema = Field(..., alias="model_config", description="Default model configuration.")
     system_prompt: Optional[str] = Field(default=None, description="System prompt template (Jinja2).")
     user_template: str = Field(..., description="User prompt template (Jinja2).")
     few_shot_examples: List[FewShotExample] = Field(

@@ -4,19 +4,19 @@ from typing import AsyncGenerator
 from anthropic import AsyncAnthropic
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+from mrds.core.resilience import circuit_breaker
+
 from mrds.adapters.llm.base import BaseLLMRunner
-from mrds.core.config import get_settings
 from mrds.domain.models import LatencyMetrics, ModelResponse, PromptConfig, TokenUsage
 
 
 class AnthropicRunner(BaseLLMRunner):
     """Anthropic API implementation using the official async SDK."""
 
-    def __init__(self):
-        settings = get_settings()
-        api_key = settings.ANTHROPIC_KEY.get_secret_value() if settings.ANTHROPIC_KEY else ""
+    def __init__(self, api_key: str) -> None:
         self.client = AsyncAnthropic(api_key=api_key)
 
+    @circuit_breaker(threshold=3, cooldown=60.0)
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
@@ -57,6 +57,7 @@ class AnthropicRunner(BaseLLMRunner):
             finish_reason=response.stop_reason,
         )
 
+    @circuit_breaker(threshold=3, cooldown=60.0)
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),

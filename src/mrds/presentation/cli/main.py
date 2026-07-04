@@ -12,6 +12,8 @@ from mrds.infrastructure.db.session import async_session_factory
 from mrds.use_cases.dataset_loader import DatasetLoader
 from mrds.use_cases.evaluation_orchestrator import EvaluationOrchestrator
 from mrds.use_cases.prompt_registry import PromptRegistry
+from mrds.adapters.llm.factory import LLMFactory
+from mrds.core.config import get_settings
 from mrds.use_cases.regression_detector import RegressionDetector
 
 app = typer.Typer(
@@ -24,9 +26,16 @@ console = Console()
 
 
 def _get_orchestrator() -> EvaluationOrchestrator:
+    settings = get_settings()
+    llm_factory = LLMFactory(
+        openai_key=settings.OPENAI_KEY.get_secret_value() if settings.OPENAI_KEY else "",
+        anthropic_key=settings.ANTHROPIC_KEY.get_secret_value() if settings.ANTHROPIC_KEY else "",
+        gemini_key=settings.GEMINI_KEY.get_secret_value() if settings.GEMINI_KEY else "",
+    )
     return EvaluationOrchestrator(
         dataset_loader=DatasetLoader(base_dir="datasets"),
         prompt_registry=PromptRegistry(base_dir="prompts"),
+        llm_factory=llm_factory,
         reports_dir="reports",
     )
 

@@ -1,3 +1,4 @@
+import json
 import re
 
 from mrds.adapters.llm.factory import LLMFactory
@@ -68,6 +69,10 @@ class LLMJudgeScorer(BaseScorer):
     """Uses a powerful LLM to grade the response based on evaluation criteria."""
     
     async def score(self, case: EvalCase, response: ModelResponse) -> Score:
+        llm_factory = self.config.get("llm_factory")
+        if not llm_factory:
+            raise ValueError("LLMJudgeScorer requires 'llm_factory' to be injected via config.")
+            
         provider = self.config.get("provider", "openai")
         model_name = self.config.get("model_name", "gpt-4-turbo")
         
@@ -77,9 +82,10 @@ class LLMJudgeScorer(BaseScorer):
         criteria = "\n".join([f"- {c}" for c in case.evaluation_criteria])
         system_prompt = (
             "You are an impartial judge. Evaluate the user's response based on the criteria. "
-            "Reply with EXACTLY a single float between 0.0 and 1.0."
+            "Reply strictly with a JSON object containing a single key 'score' with a float value between 0.0 and 1.0. "
+            "Example: {\"score\": 0.8}"
         )
-        user_prompt = f"Criteria:\n{criteria}\n\nResponse to evaluate:\n{response.raw_text}"
+        user_prompt = f"Criteria:\n{criteria}\n\nResponse to evaluate:\n<response>\n{response.raw_text}\n</response>"
         
         prompt_config = PromptConfig(
             provider=provider,
@@ -87,18 +93,35 @@ class LLMJudgeScorer(BaseScorer):
             system_prompt=system_prompt,
             user_template=user_prompt,
             temperature=0.0,
-            max_tokens=10
+            max_tokens=50
         )
         
-        runner = LLMFactory.get_runner(provider)
+        runner = llm_factory.get_runner(provider)
         judge_response = await runner.generate(prompt_config, user_prompt)
         
+        # Robust Parsing
+        value = 0.0
+        raw_output = judge_response.raw_text.strip()
+        
         try:
-            value = float(judge_response.raw_text.strip())
-            value = max(0.0, min(1.0, value))
-        except ValueError:
-            value = 0.0  # Failed to parse judge output
-            
+            # 1. Try pure JSON parsing
+            parsed_json = json.loads(raw_output)
+            if "score" in parsed_json:
+                value = float(parsed_json["score"])
+            else:
+                raise ValueError("JSON missing 'score' key")
+        except (json.JSONDecodeError, ValueError, TypeError):
+            # 2. Fallback to Regex extraction if JSON fails
+            match = re.search(r"\"score\"\s*:\s*([0-9]*\.[0-9]+|[0-9]+)", raw_output)
+            if match:
+                value = float(match.group(1))
+            else:
+                # Absolute last resort fallback to any float in output
+                match_any = re.search(r"([0-9]*\.[0-9]+|[0-9]+)", raw_output)
+                if match_any:
+                    value = float(match_any.group(1))
+                    
+        value = max(0.0, min(1.0, value))
         return Score(metric_name="llm_judge", value=value)
 
 

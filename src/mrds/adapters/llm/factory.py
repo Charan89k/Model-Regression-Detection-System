@@ -10,18 +10,31 @@ class LLMProviderNotSupportedError(MRDSError):
     pass
 
 
-class LLMFactory:
-    """Dependency injection factory for LLM runners."""
+from typing import Dict
 
-    @staticmethod
-    def get_runner(provider_name: str) -> BaseLLMRunner:
+class LLMFactory:
+    """Dependency injection factory for LLM runners, maintaining a cache of active runners."""
+
+    def __init__(self, openai_key: str = "", anthropic_key: str = "", gemini_key: str = "") -> None:
+        self.openai_key = openai_key
+        self.anthropic_key = anthropic_key
+        self.gemini_key = gemini_key
+        self._cache: Dict[str, BaseLLMRunner] = {}
+
+    def get_runner(self, provider_name: str) -> BaseLLMRunner:
         provider_name = provider_name.lower().strip()
         
+        if provider_name in self._cache:
+            return self._cache[provider_name]
+            
         if provider_name == "openai":
-            return OpenAIRunner()
+            runner = OpenAIRunner(api_key=self.openai_key)
         elif provider_name == "anthropic":
-            return AnthropicRunner()
+            runner = AnthropicRunner(api_key=self.anthropic_key)
         elif provider_name == "gemini":
-            return GeminiRunner()
+            runner = GeminiRunner(api_key=self.gemini_key)
         else:
             raise LLMProviderNotSupportedError(f"Unsupported LLM provider: {provider_name}")
+            
+        self._cache[provider_name] = runner
+        return runner

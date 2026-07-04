@@ -18,7 +18,7 @@ def prompt_dir(tmp_path: Path) -> Path:
     
     yaml_content = {
         "name": "summarize",
-        "version": "1.0",
+        "version": "1.0.0",
         "author": "test-team",
         "description": "A test summarization prompt",
         "model_config": {
@@ -37,7 +37,7 @@ def prompt_dir(tmp_path: Path) -> Path:
         ]
     }
     
-    file_path = summarize_dir / "v1.0.yaml"
+    file_path = summarize_dir / "v1.0.0.yaml"
     with open(file_path, "w", encoding="utf-8") as f:
         yaml.dump(yaml_content, f)
         
@@ -47,28 +47,28 @@ def prompt_dir(tmp_path: Path) -> Path:
 def test_prompt_registry_loads_and_validates(prompt_dir: Path):
     registry = PromptRegistry(base_dir=prompt_dir)
     
-    prompt = registry.get_prompt(name="summarize", version="1.0")
+    prompt = registry.get_prompt(name="summarize", version="1.0.0")
     
     assert isinstance(prompt, PromptTemplateSchema)
     assert prompt.name == "summarize"
-    assert prompt.version == "1.0"
-    assert prompt.model_config.provider == "openai"
-    assert prompt.model_config.temperature == 0.5
+    assert prompt.version == "1.0.0"
+    assert prompt.llm_config.provider == "openai"
+    assert prompt.llm_config.temperature == 0.5
     assert len(prompt.few_shot_examples) == 1
     assert prompt.few_shot_examples[0].input == "Long text about dogs."
 
 
-def test_prompt_registry_caching(prompt_dir: Path, mocker):
+def test_prompt_registry_caching(prompt_dir: Path):
     registry = PromptRegistry(base_dir=prompt_dir)
     
     # First load
-    prompt1 = registry.get_prompt(name="summarize", version="1.0")
+    prompt1 = registry.get_prompt(name="summarize", version="1.0.0")
     
     # Delete file to prove it loads from cache
-    (prompt_dir / "summarize" / "v1.0.yaml").unlink()
+    (prompt_dir / "summarize" / "v1.0.0.yaml").unlink()
     
     # Second load should succeed from cache
-    prompt2 = registry.get_prompt(name="summarize", version="1.0")
+    prompt2 = registry.get_prompt(name="summarize", version="1.0.0")
     
     assert prompt1 is prompt2  # Same instance
 
@@ -77,7 +77,7 @@ def test_prompt_registry_not_found(prompt_dir: Path):
     registry = PromptRegistry(base_dir=prompt_dir)
     
     with pytest.raises(PromptNotFoundError):
-        registry.get_prompt(name="nonexistent", version="1.0")
+        registry.get_prompt(name="nonexistent", version="1.0.0")
 
 
 def test_render_template_success(prompt_dir: Path):

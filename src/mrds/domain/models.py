@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 class MRDSDomainModel(BaseModel):
     """Base model for all domain entities with strict validation."""
-    model_config = ConfigDict(validate_assignment=True, strict=True, extra="forbid")
+    model_config = ConfigDict(validate_assignment=True, strict=False, extra="forbid", use_enum_values=True)
 
 
 class TokenUsage(MRDSDomainModel):

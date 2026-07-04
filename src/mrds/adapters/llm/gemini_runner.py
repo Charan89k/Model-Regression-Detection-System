@@ -4,21 +4,21 @@ from typing import AsyncGenerator
 import google.generativeai as genai
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+from mrds.core.resilience import circuit_breaker
+
 from mrds.adapters.llm.base import BaseLLMRunner
-from mrds.core.config import get_settings
 from mrds.domain.models import LatencyMetrics, ModelResponse, PromptConfig, TokenUsage
 
 
 class GeminiRunner(BaseLLMRunner):
     """Google Gemini API implementation using the google-generativeai SDK."""
 
-    def __init__(self):
-        settings = get_settings()
-        api_key = settings.GEMINI_KEY.get_secret_value() if settings.GEMINI_KEY else ""
+    def __init__(self, api_key: str) -> None:
         # The library uses global configuration, which isn't ideal for DI, 
         # but required by the current version of google-generativeai.
         genai.configure(api_key=api_key)
 
+    @circuit_breaker(threshold=3, cooldown=60.0)
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
@@ -69,6 +69,7 @@ class GeminiRunner(BaseLLMRunner):
             finish_reason=finish_reason,
         )
 
+    @circuit_breaker(threshold=3, cooldown=60.0)
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),

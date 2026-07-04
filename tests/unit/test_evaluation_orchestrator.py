@@ -8,6 +8,8 @@ from mrds.domain.models import LatencyMetrics, ModelResponse, TokenUsage
 from mrds.use_cases.dataset_loader import DatasetLoader
 from mrds.use_cases.evaluation_orchestrator import EvaluationOrchestrator
 from mrds.use_cases.prompt_registry import PromptRegistry
+from mrds.adapters.llm.factory import LLMFactory
+from mrds.adapters.llm.factory import LLMFactory
 
 
 @pytest.fixture
@@ -33,7 +35,7 @@ def mock_prompt(tmp_path: Path) -> Path:
         f.write(
             """
 name: test_prompt
-version: 1.0
+version: "1.0"
 model_config:
   provider: openai
   model_name: gpt-4
@@ -50,25 +52,27 @@ async def test_run_evaluation(mock_dataset: Path, mock_prompt: Path, tmp_path: P
     registry = PromptRegistry(mock_prompt)
     reports_dir = tmp_path / "reports"
 
-    orchestrator = EvaluationOrchestrator(
-        dataset_loader=loader, prompt_registry=registry, reports_dir=reports_dir
-    )
-
     mock_runner = AsyncMock()
     mock_runner.generate.return_value = ModelResponse(
         raw_text="Mock Output",
         token_usage=TokenUsage(prompt_tokens=1, completion_tokens=1, total_tokens=2),
         latency=LatencyMetrics(total_latency_ms=10.0),
     )
+    
+    mock_factory = AsyncMock(spec=LLMFactory)
+    mock_factory.get_runner.return_value = mock_runner
 
-    with patch("mrds.use_cases.evaluation_orchestrator.LLMFactory.get_runner", return_value=mock_runner):
-        results = await orchestrator.run_evaluation(
-            dataset_name="test_data",
-            dataset_version="1.0",
-            prompt_name="test_prompt",
-            prompt_version="1.0",
-            triggered_by="pytest",
-        )
+    orchestrator = EvaluationOrchestrator(
+        dataset_loader=loader, prompt_registry=registry, llm_factory=mock_factory, reports_dir=reports_dir
+    )
+
+    results = await orchestrator.run_evaluation(
+        dataset_name="test_data",
+        dataset_version="1.0",
+        prompt_name="test_prompt",
+        prompt_version="1.0",
+        triggered_by="pytest",
+    )
 
     # Verify return objects
     assert len(results) == 1
@@ -107,26 +111,28 @@ async def test_run_evaluation_concurrent_writes(mock_dataset: Path, mock_prompt:
     registry = PromptRegistry(mock_prompt)
     reports_dir = tmp_path / "reports_concurrent"
 
-    orchestrator = EvaluationOrchestrator(
-        dataset_loader=loader, prompt_registry=registry, reports_dir=reports_dir
-    )
-
     mock_runner = AsyncMock()
     mock_runner.generate.return_value = ModelResponse(
         raw_text="Mock Output",
         token_usage=TokenUsage(prompt_tokens=1, completion_tokens=1, total_tokens=2),
         latency=LatencyMetrics(total_latency_ms=10.0),
     )
+    
+    mock_factory = AsyncMock(spec=LLMFactory)
+    mock_factory.get_runner.return_value = mock_runner
 
-    with patch("mrds.use_cases.evaluation_orchestrator.LLMFactory.get_runner", return_value=mock_runner):
-        results = await orchestrator.run_evaluation(
-            dataset_name="test_data",
-            dataset_version="1.0",
-            prompt_name="test_prompt",
-            prompt_version="1.0",
-            triggered_by="pytest",
-            concurrency_limit=50,
-        )
+    orchestrator = EvaluationOrchestrator(
+        dataset_loader=loader, prompt_registry=registry, llm_factory=mock_factory, reports_dir=reports_dir
+    )
+
+    results = await orchestrator.run_evaluation(
+        dataset_name="test_data",
+        dataset_version="1.0",
+        prompt_name="test_prompt",
+        prompt_version="1.0",
+        triggered_by="pytest",
+        concurrency_limit=50,
+    )
 
     assert len(results) == 100
     report_files = list(reports_dir.glob("*.jsonl"))

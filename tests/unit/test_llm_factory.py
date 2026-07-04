@@ -11,19 +11,24 @@ from mrds.domain.models import PromptConfig
 
 
 def test_factory_returns_correct_runner():
-    openai = LLMFactory.get_runner("openai")
+    factory = LLMFactory(openai_key="test", anthropic_key="test", gemini_key="test")
+    
+    openai = factory.get_runner("openai")
     assert isinstance(openai, OpenAIRunner)
+    assert openai.client.api_key == "test"
 
-    anthropic = LLMFactory.get_runner("anthropic")
+    anthropic = factory.get_runner("anthropic")
     assert isinstance(anthropic, AnthropicRunner)
+    assert anthropic.client.api_key == "test"
 
-    gemini = LLMFactory.get_runner("gemini")
+    gemini = factory.get_runner("gemini")
     assert isinstance(gemini, GeminiRunner)
 
 
 def test_factory_raises_error_for_unknown_provider():
+    factory = LLMFactory()
     with pytest.raises(LLMProviderNotSupportedError):
-        LLMFactory.get_runner("unknown_provider")
+        factory.get_runner("unknown_provider")
 
 
 def test_calculate_cost():
@@ -42,7 +47,7 @@ def test_calculate_cost():
 
 @pytest.mark.asyncio
 async def test_openai_runner_mocked():
-    runner = OpenAIRunner()
+    runner = OpenAIRunner(api_key="test_key")
     
     mock_response = MagicMock()
     mock_response.choices = [MagicMock()]
