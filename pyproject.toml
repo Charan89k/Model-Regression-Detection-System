@@ -27,6 +27,7 @@ dependencies = [
     "tenacity>=8.2.0",
     "aiosqlite>=0.19.0",
     "rich>=13.7.0",
+    "aiofiles>=23.0.0",
 ]
 
 [project.optional-dependencies]
@@ -71,3 +72,6 @@ disallow_untyped_defs = true
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mrds"]

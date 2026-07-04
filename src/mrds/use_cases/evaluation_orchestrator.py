@@ -1,4 +1,5 @@
 import asyncio
+import aiofiles
 from pathlib import Path
 from typing import List
 
@@ -57,6 +58,20 @@ class EvaluationOrchestrator:
         semaphore = asyncio.Semaphore(concurrency_limit)
         report_file = self.reports_dir / f"run_{run_metadata.run_id}.jsonl"
 
+        queue: asyncio.Queue[str | None] = asyncio.Queue()
+
+        async def writer_task() -> None:
+            async with aiofiles.open(report_file, "a", encoding="utf-8") as f:
+                while True:
+                    item = await queue.get()
+                    if item is None:
+                        queue.task_done()
+                        break
+                    await f.write(item + "\n")
+                    queue.task_done()
+        
+        writer = asyncio.create_task(writer_task())
+
         # Map YAML PromptSchema to Domain PromptConfig
         domain_prompt_config = PromptConfig(
             provider=prompt_schema.model_config.provider,
@@ -99,14 +114,17 @@ class EvaluationOrchestrator:
                 )
 
                 # Persist intermediate results incrementally (fail-safe)
-                with open(report_file, "a", encoding="utf-8") as f:
-                    f.write(result.model_dump_json() + "\n")
+                await queue.put(result.model_dump_json())
 
                 return result
 
         # Fan out tasks concurrently
         tasks = [process_case(case) for case in dataset.cases]
         results = await asyncio.gather(*tasks)
+
+        # Signal writer to shutdown and wait for it
+        await queue.put(None)
+        await writer
 
         logger.info("Evaluation complete", total_cases=len(results), report_file=str(report_file))
         return list(results)
