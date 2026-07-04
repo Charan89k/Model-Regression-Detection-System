@@ -21,9 +21,9 @@ class BaseAppConfig(BaseSettings):
     LOG_FORMAT: Literal["text", "json"] = Field(default="text")
 
     # LLM Providers (Secrets)
-    OPENAI_API_KEY: SecretStr | None = Field(default=None)
-    ANTHROPIC_API_KEY: SecretStr | None = Field(default=None)
-    GEMINI_API_KEY: SecretStr | None = Field(default=None)
+    OPENAI_KEY: SecretStr | None = Field(default=None)
+    ANTHROPIC_KEY: SecretStr | None = Field(default=None)
+    GEMINI_KEY: SecretStr | None = Field(default=None)
 
     # Database
     DATABASE_URL: str = Field(default="sqlite+aiosqlite:///mrds.db")
@@ -60,9 +60,9 @@ class TestingConfig(BaseAppConfig):
     DATABASE_URL: str = Field(
         default="sqlite+aiosqlite:///:memory:"
     )
-    OPENAI_API_KEY: SecretStr = Field(default=SecretStr("test_openai_key"))
-    ANTHROPIC_API_KEY: SecretStr = Field(default=SecretStr("test_anthropic_key"))
-    GEMINI_API_KEY: SecretStr = Field(default=SecretStr("test_gemini_key"))
+    OPENAI_KEY: SecretStr = Field(default=SecretStr("test_openai_key"))
+    ANTHROPIC_KEY: SecretStr = Field(default=SecretStr("test_anthropic_key"))
+    GEMINI_KEY: SecretStr = Field(default=SecretStr("test_gemini_key"))
 
 
 class ProductionConfig(BaseAppConfig):

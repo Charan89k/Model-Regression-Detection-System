@@ -14,7 +14,7 @@ class OpenAIRunner(BaseLLMRunner):
 
     def __init__(self):
         settings = get_settings()
-        api_key = settings.OPENAI_API_KEY.get_secret_value() if settings.OPENAI_API_KEY else ""
+        api_key = settings.OPENAI_KEY.get_secret_value() if settings.OPENAI_KEY else ""
         self.client = AsyncOpenAI(api_key=api_key)
 
     @retry(

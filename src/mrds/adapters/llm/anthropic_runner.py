@@ -14,7 +14,7 @@ class AnthropicRunner(BaseLLMRunner):
 
     def __init__(self):
         settings = get_settings()
-        api_key = settings.ANTHROPIC_API_KEY.get_secret_value() if settings.ANTHROPIC_API_KEY else ""
+        api_key = settings.ANTHROPIC_KEY.get_secret_value() if settings.ANTHROPIC_KEY else ""
         self.client = AsyncAnthropic(api_key=api_key)
 
     @retry(

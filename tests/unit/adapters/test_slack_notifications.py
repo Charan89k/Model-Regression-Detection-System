@@ -12,7 +12,7 @@ from mrds.domain.models import RegressionAlert, RunComparison
 @pytest.fixture
 def mock_settings():
     settings = get_settings()
-    settings.SLACK_WEBHOOK_URL = SecretStr("MOCK_SLACK_WEBHOOK_URL")
+    settings.SLACK_WEBHOOK_URL = SecretStr("https://example.com/mock-webhook")
     return settings
 
 

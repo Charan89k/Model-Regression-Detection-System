@@ -14,7 +14,7 @@ class GeminiRunner(BaseLLMRunner):
 
     def __init__(self):
         settings = get_settings()
-        api_key = settings.GEMINI_API_KEY.get_secret_value() if settings.GEMINI_API_KEY else ""
+        api_key = settings.GEMINI_KEY.get_secret_value() if settings.GEMINI_KEY else ""
         # The library uses global configuration, which isn't ideal for DI, 
         # but required by the current version of google-generativeai.
         genai.configure(api_key=api_key)
